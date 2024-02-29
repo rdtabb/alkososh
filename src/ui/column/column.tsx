@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ElementStates } from '../../../types/element-states'
+import { ElementStates } from '../../types/element-states'
 
 import styles from './column.module.css'
 
