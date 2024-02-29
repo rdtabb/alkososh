@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { ReturnButton } from '../return-button/return-button'
 
 import styles from './solution-layout.module.css'
+import '../common.css'
 
 interface SolutionLayoutProps extends PropsWithChildren {
     title: string

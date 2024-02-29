@@ -1,6 +1,6 @@
 import React from 'react'
 
-import loaderIcon from '../../../images/icons/loader.svg'
+import loaderIcon from '../../images/icons/loader.svg'
 import { Direction } from '../../types/direction'
 import { AscendingIcon } from '../icons/ascending-icon'
 import { DescendingIcon } from '../icons/descending-icon'
