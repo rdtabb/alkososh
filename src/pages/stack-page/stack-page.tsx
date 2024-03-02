@@ -1,6 +1,4 @@
-import React, { ChangeEvent, useCallback, useState, useEffect } from 'react'
-
-import { useAtom } from 'jotai'
+import React, { ChangeEvent, useCallback, useState, useEffect, useMemo } from 'react'
 
 import { Button } from '../../ui/button/button'
 import { Input } from '../../ui/input/input'
@@ -9,13 +7,18 @@ import { preventDefault, performDelay } from '../../utils/utils'
 
 import { StackDisplay } from './stack-display'
 import styles from './stack-page.module.css'
-import { stackAtom, stackController, STACK_CONTROLLER_ACTION_DURATION } from './stack-page.state'
+import { stackController, STACK_CONTROLLER_ACTION_DURATION, StackItem } from './stack-page.state'
 
-export const StackPage = () => {
+export const StackPage = (): JSX.Element => {
     const [newItem, setNewItem] = useState<string>('')
     const [isItemAdding, setIsItemAdding] = useState<boolean>(false)
     const [isItemDeleting, setIsItemDeleting] = useState<boolean>(false)
-    const [stack, setStack] = useAtom(stackAtom)
+    const [stack, setStack] = useState<StackItem[]>([])
+
+    const isPerformingStackAction = useMemo(
+        () => isItemDeleting || isItemDeleting,
+        [isItemDeleting, isItemAdding]
+    )
 
     const handleNewItemChange = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
         setNewItem(event.target.value)
@@ -63,7 +66,6 @@ export const StackPage = () => {
     useEffect(
         () => () => {
             stackController.clear()
-            setStack([])
         },
         []
     )
@@ -82,12 +84,13 @@ export const StackPage = () => {
                         type="button"
                         text="Добавить"
                         onClick={pushToStack}
-                        disabled={!newItem}
+                        disabled={!newItem || isItemDeleting}
                         isLoader={isItemAdding}
                     />
                     <Button
                         type="button"
                         text="Удалить"
+                        isLoader={isItemDeleting || isItemAdding}
                         onClick={popFromStack}
                         disabled={!stack.length}
                     />
@@ -96,10 +99,12 @@ export const StackPage = () => {
                     type="reset"
                     text="Очистить"
                     onClick={clearStack}
-                    disabled={!stack.length}
+                    disabled={!stack.length || isPerformingStackAction}
                 />
             </form>
-            <StackDisplay isPerformingStackAction={isItemDeleting || isItemAdding} />
+            <section className={styles['display-wrapper']}>
+                <StackDisplay stack={stack} isPerformingStackAction={isPerformingStackAction} />
+            </section>
         </SolutionLayout>
     )
 }

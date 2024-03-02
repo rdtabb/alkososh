@@ -1,4 +1,9 @@
 .stack-form {
+    --_width: 60rem;
+
+    width: min(var(--_width), 100% - 1rem);
+    margin-inline: auto;
+
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -9,6 +14,13 @@
 .stack-form__input-container {
     display: flex;
     gap: 8px;
+}
+
+.display-wrapper {
+    --_width: 60rem;
+
+    width: min(var(--_width), 100% - 1rem);
+    margin-inline: auto;
 }
 
 .stack {

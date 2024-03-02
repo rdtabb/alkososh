@@ -60,5 +60,3 @@ export class Stack<T extends StackItem> implements IStack<T> {
 export const stackController = new Stack<StackItem>()
 
 export const STACK_CONTROLLER_ACTION_DURATION = 500
-
-export const stackAtom = atom<StackItem[]>([])
