@@ -2,7 +2,7 @@ import { FormEvent } from 'react'
 
 interface PerformDelayConfig {
     delayInMs: number
-    setIsDelayPerforming: (isPerforming: boolean) => void
+    setIsDelayPerforming?: (isPerforming: boolean) => void
 }
 
 export const preventDefault = (event: FormEvent<HTMLFormElement>): void => {
@@ -13,11 +13,11 @@ export const performDelay = ({
     delayInMs,
     setIsDelayPerforming
 }: PerformDelayConfig): Promise<void> => {
-    setIsDelayPerforming(true)
+    setIsDelayPerforming?.(true)
     return new Promise((res) => {
         setTimeout(() => {
             res()
-            setIsDelayPerforming(false)
+            setIsDelayPerforming?.(false)
         }, delayInMs)
     })
 }

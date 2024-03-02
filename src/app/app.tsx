@@ -8,7 +8,7 @@ import { MainPage } from '../pages/main-page/main-page'
 import { QueuePage } from '../pages/queue-page/queue-page'
 import { SortingPage } from '../pages/sorting-page/sorting-page'
 import { StackPage } from '../pages/stack-page/stack-page'
-import { StringComponent } from '../pages/string/string'
+import { StringPage } from '../pages/string/string'
 
 import './app.css'
 
@@ -16,8 +16,8 @@ export const App = () => (
     <BrowserRouter>
         <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/recursion" element={<StringComponent />} />
-            <Route path="/fibonacci" element={<FibonacciPage />} />
+            <Route path="/recursion" element={<StringPage />} />
+            {/* <Route path="/fibonacci" element={<FibonacciPage />} /> */}
             <Route path="/sorting" element={<SortingPage />} />
             <Route path="/stack" element={<StackPage />} />
             <Route path="/queue" element={<QueuePage />} />

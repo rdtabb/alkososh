@@ -2,31 +2,30 @@ import React, { memo } from 'react'
 
 import styles from '../common-form-layout.module.css'
 
-interface FibonacciDisplayProps {
-    fibonacciSequence: number[]
-    isPerforming: boolean
+interface StringDisplayProps {
+    string: string[]
+    performingIndex1: number | null
+    performingIndex2: number | null
 }
 
-const marginStyle = { margin: 0 }
-
-export const FibonacciDisplay = memo(
-    ({ fibonacciSequence, isPerforming }: FibonacciDisplayProps) => {
+export const StringDisplay = memo(
+    ({ string, performingIndex1, performingIndex2 }: StringDisplayProps) => {
         return (
             <ul className={styles['sequence']}>
-                {fibonacciSequence.map((number, index) => (
+                {string.map((value, index) => (
                     <li key={index} className={styles['sequence__item']}>
                         <p
                             className={styles['sequence__item-value']}
                             style={{
                                 borderColor:
-                                    isPerforming && index === fibonacciSequence.length - 1
+                                    index === performingIndex1 || index === performingIndex2
                                         ? 'purple'
                                         : 'black'
                             }}
                         >
-                            {number}
+                            {value}
                         </p>
-                        <p style={marginStyle}>{index}</p>
+                        <p style={{ margin: 0 }}>{index}</p>
                     </li>
                 ))}
             </ul>

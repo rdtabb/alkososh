@@ -1,13 +1,14 @@
-import React, { useState, useCallback, useEffect, type ChangeEvent } from 'react'
+import React, { useState, useCallback, useEffect, ChangeEvent } from 'react'
 
-import styles from '../common-form-layout.module.css'
-import { Input } from '../../ui/input/input'
 import { Button } from '../../ui/button/button'
+import { Input } from '../../ui/input/input'
 import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { preventDefault, performDelay } from '../../utils/utils'
 
 import { fibonacci, FIBONACCI_ACTION_DURATION } from './fibonacci-page.state'
 import { FibonacciDisplay } from './fibonacci-display'
+
+import styles from '../common-form-layout.module.css'
 
 export const FibonacciPage = () => {
     const [newItem, setNewItem] = useState<string>('')
