@@ -1,13 +1,13 @@
-import React, { ChangeEvent, useCallback, useState, useMemo } from 'react'
+import React, { ChangeEvent, useCallback, useState } from 'react'
 
-import { RadioInput } from '../../ui/radio-input/radio-input'
-import { Button } from '../../ui/button/button'
-import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { Direction } from '../../types/direction'
 import { ElementStates } from '../../types/element-states'
+import { Button } from '../../ui/button/button'
+import { RadioInput } from '../../ui/radio-input/radio-input'
+import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { preventDefault, performDelay } from '../../utils/utils'
-
 import styles from '../common-form-layout.module.css'
+
 import { SortingDisplay } from './sorting-display'
 
 type SelectedType = 'selection' | 'bubble'
@@ -41,7 +41,7 @@ export const SortingPage = () => {
                     await performDelay({ delayInMs: 500, setIsDelayPerforming: setIsSorting })
                     if (direction === Direction.Ascending) {
                         if (array[j] > array[j + 1]) {
-                            let temp = array[j]
+                            const temp = array[j]
                             array[j] = array[j + 1]
                             array[j + 1] = temp
                             setModindecies((prev) => [...prev, j, j + 1])
@@ -49,7 +49,7 @@ export const SortingPage = () => {
                         }
                     } else {
                         if (array[j] < array[j + 1]) {
-                            let temp = array[j]
+                            const temp = array[j]
                             array[j] = array[j + 1]
                             array[j + 1] = temp
                             setModindecies((prev) => [...prev, j, j + 1])
@@ -69,8 +69,8 @@ export const SortingPage = () => {
     const selectionSort = useCallback(
         async (direction: Direction): Promise<void> => {
             setIsSorting(true)
-            let array = structuredClone(randomArray)
-            let n = array.length
+            const array = structuredClone(randomArray)
+            const n = array.length
             for (let i = 0; i < n; i++) {
                 let min = i
                 await performDelay({ delayInMs: 500, setIsDelayPerforming: setIsSorting })
@@ -88,7 +88,7 @@ export const SortingPage = () => {
                     }
                 }
                 if (min != i) {
-                    let tmp = array[i]
+                    const tmp = array[i]
                     array[i] = array[min]
                     array[min] = tmp
                     setCurrChangingIndecies([min, i])

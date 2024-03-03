@@ -16,7 +16,7 @@ export const StackPage = (): JSX.Element => {
     const [stack, setStack] = useState<StackItem[]>([])
 
     const isPerformingStackAction = useMemo(
-        () => isItemDeleting || isItemDeleting,
+        () => isItemDeleting || isItemAdding,
         [isItemDeleting, isItemAdding]
     )
 
@@ -90,16 +90,16 @@ export const StackPage = (): JSX.Element => {
                     <Button
                         type="button"
                         text="Удалить"
-                        isLoader={isItemDeleting || isItemAdding}
                         onClick={popFromStack}
                         disabled={!stack.length}
+                        isLoader={isItemDeleting}
                     />
                 </div>
                 <Button
                     type="reset"
                     text="Очистить"
                     onClick={clearStack}
-                    disabled={!stack.length || isPerformingStackAction}
+                    disabled={!stack.length}
                 />
             </form>
             <section className={styles['display-wrapper']}>

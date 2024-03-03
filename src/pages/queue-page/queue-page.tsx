@@ -1,26 +1,31 @@
 import React, { useState, useMemo, useCallback, useEffect, type ChangeEvent } from 'react'
 
-import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
-import { Input } from '../../ui/input/input'
 import { Button } from '../../ui/button/button'
+import { Input } from '../../ui/input/input'
+import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { preventDefault, performDelay } from '../../utils/utils'
-
 import styles from '../stack-page/stack-page.module.css'
-import { QueueItem, queueController, QUEUE_CONTROLLER_ACTION_DURATION } from './queue-page.state'
+
 import { QueueDisplay } from './queue-display'
+import {
+    QueueItem,
+    queueController,
+    QUEUE_CONTROLLER_ACTION_DURATION,
+    initialQueueState
+} from './queue-page.state'
 
 export const QueuePage = () => {
     const [newItem, setNewItem] = useState<string>('')
     const [isPerformingEnqueue, setIsPerformingEnqueue] = useState<boolean>(false)
     const [isPerformingDequeue, setIsPerformingDequeue] = useState<boolean>(false)
-    const [queue, setQueue] = useState<QueueItem[]>([])
+    const [queue, setQueue] = useState<QueueItem[]>(initialQueueState)
 
     const handleNewItemChange = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
         setNewItem(event.target.value)
     }, [])
 
     const isPerformingQueueAction: boolean = useMemo(
-        () => isPerformingDequeue || isPerformingDequeue,
+        () => isPerformingEnqueue || isPerformingDequeue,
         [isPerformingDequeue, isPerformingEnqueue]
     )
 
@@ -48,7 +53,7 @@ export const QueuePage = () => {
     const clearQueue = useCallback((): void => {
         setNewItem('')
         queueController.clear()
-        setQueue([])
+        setQueue(initialQueueState)
     }, [setQueue])
 
     useEffect(() => {

@@ -14,6 +14,7 @@
 .form__input-container {
     display: flex;
     gap: 8px;
+    width: 100%;
 }
 
 .display-wrapper {
@@ -21,12 +22,18 @@
 
     width: min(var(--_width), 100% - 1rem);
     margin-inline: auto;
+    min-height: max-content;
 }
 
 .sequence {
     display: flex;
-    list-style: none;
+    justify-content: center;
+    align-items: center;
     gap: 8px;
+
+    list-style: none;
+    min-height: 300px;
+    padding: 0;
 }
 
 .sequence__item {

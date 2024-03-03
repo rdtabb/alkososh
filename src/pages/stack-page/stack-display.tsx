@@ -16,7 +16,7 @@ export const StackDisplay = memo(({ isPerformingStackAction, stack }: StackDispl
                 <p
                     className={styles['stack__item-value']}
                     style={{
-                        borderColor: isPerformingStackAction && isHead ? 'purple' : 'black'
+                        borderColor: isPerformingStackAction && isHead ? 'purple' : 'blue'
                     }}
                 >
                     {value}

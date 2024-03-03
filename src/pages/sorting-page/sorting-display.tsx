@@ -1,8 +1,7 @@
 import React, { memo } from 'react'
 
-import { Column } from '../../ui/column/column'
 import { ElementStates } from '../../types/element-states'
-
+import { Column } from '../../ui/column/column'
 import styles from '../common-form-layout.module.css'
 
 interface SortingDisplayProps {

@@ -1,8 +1,8 @@
-import { memo, useMemo } from 'react'
-
-import { LinkedList, ListNode } from './list-page.state'
+import React, { memo, useMemo } from 'react'
 
 import styles from '../stack-page/stack-page.module.css'
+
+import { LinkedList, ListNode } from './list-page.state'
 
 interface ListDisplayProps {
     linkedList: LinkedList | null

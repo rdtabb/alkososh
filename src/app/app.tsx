@@ -18,6 +18,7 @@ export const App = () => (
             <Route path="/" element={<MainPage />} />
             <Route path="/recursion" element={<StringPage />} />
             {/* <Route path="/fibonacci" element={<FibonacciPage />} /> */}
+            <Route path="/fibonacci" element={<FibonacciPage />} />
             <Route path="/sorting" element={<SortingPage />} />
             <Route path="/stack" element={<StackPage />} />
             <Route path="/queue" element={<QueuePage />} />

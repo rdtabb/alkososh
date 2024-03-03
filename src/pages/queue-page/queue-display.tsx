@@ -14,27 +14,25 @@ export const QueueDisplay = memo(
     ({ queue, isPerformingDequeue, isPerformingEnqueue }: QueueDisplayProps) => {
         return (
             <ul className={styles['stack']}>
-                {queue.map(({ value, id }, index) => {
-                    const isHead = index === queue.length
-                    const isTail = index === 0
+                {queue.map((item, index) => {
+                    const isHead = item !== null && index === queue.findIndex((item) => item !== null)
+                    const isTail = item !== null && item.id === queue.filter((item) => item !== null).pop()?.id
 
                     const showBorder =
-                        (isHead && isPerformingEnqueue) || (isTail && isPerformingDequeue)
+                        (isTail && isPerformingEnqueue) || (isHead && isPerformingDequeue)
 
                     return (
-                        <li key={id} className={styles['stack__item']}>
-                            <p className={styles['stack__item-top']}>
-                                {index === queue.length ? 'head' : ''}
-                            </p>
+                        <li key={item?.id ?? index} className={styles['stack__item']}>
+                            <p className={styles['stack__item-top']}>{isHead ? 'head' : ''}</p>
                             <p
                                 className={styles['stack__item-value']}
                                 style={{
-                                    borderColor: showBorder ? 'purple' : 'black'
+                                    borderColor: showBorder ? 'purple' : 'blue'
                                 }}
                             >
-                                {value}
+                                {item?.value ?? ''}
                             </p>
-                            <p style={{ margin: 0 }}>{index === 0 ? 'tail' : index}</p>
+                            <p style={{ margin: 0 }}>{isTail ? 'tail' : index}</p>
                         </li>
                     )
                 })}

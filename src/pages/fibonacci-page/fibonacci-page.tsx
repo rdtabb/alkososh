@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react'
 
-import { Button } from '../../ui/button/button'
-import { Input } from '../../ui/input/input'
 import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { preventDefault, performDelay } from '../../utils/utils'
-
-import { fibonacci, FIBONACCI_ACTION_DURATION } from './fibonacci-page.state'
-import { FibonacciDisplay } from './fibonacci-display'
-
 import styles from '../common-form-layout.module.css'
+
+import { FibonacciDisplay } from './fibonacci-display'
+import { fibonacci, FIBONACCI_ACTION_DURATION } from './fibonacci-page.state'
+// если имортировать из общей папки ui - у компонентов сбросятся стили по всей прилажке
+// копирование в локальную папку страницы решило проблему
+import { Button, Input } from './ui'
 
 export const FibonacciPage = () => {
     const [newItem, setNewItem] = useState<string>('')
@@ -26,7 +26,7 @@ export const FibonacciPage = () => {
 
         const number = parseInt(newItem)
         const sequence: number[] = []
-        for (let i = 0; i < number; i++) {
+        for (let i = 1; i <= number; i++) {
             sequence.push(fibonacci(i))
             setFibonacciSequence([...sequence])
             await performDelay({
@@ -53,25 +53,23 @@ export const FibonacciPage = () => {
             <form onSubmit={preventDefault} className={styles['form']}>
                 <div className={styles['form__input-container']}>
                     <Input
+                        value={newItem}
+                        onChange={handleNewItemChange}
                         isLimitText
                         max={'19'}
                         type="number"
-                        value={newItem}
-                        onChange={handleNewItemChange}
                     />
                     <Button
                         type="button"
                         text="Рассчитать"
                         onClick={performFibonacci}
                         disabled={!newItem || isPerforming}
+                        isLoader={isPerforming}
                     />
                 </div>
             </form>
             <section className={styles['display-wrapper']}>
-                <FibonacciDisplay
-                    fibonacciSequence={fibonacciSequence}
-                    isPerforming={isPerforming}
-                />
+                <FibonacciDisplay fibonacciSequence={fibonacciSequence} />
             </section>
         </SolutionLayout>
     )

@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react'
 
-import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
-import { Input } from '../../ui/input/input'
 import { Button } from '../../ui/button/button'
+import { Input } from '../../ui/input/input'
+import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
 import { preventDefault } from '../../utils/utils'
 import styles from '../stack-page/stack-page.module.css'
 
-import { LinkedList, linkedListController } from './list-page.state'
 import { ListDisplay } from './list-display'
+import { LinkedList, linkedListController } from './list-page.state'
 
 export const ListPage = (): JSX.Element => {
     const [newItem, setNewItem] = useState<string>('')

@@ -1,5 +1,3 @@
-import { atom } from 'jotai'
-
 export interface StackItem {
     value: string
     id: number
