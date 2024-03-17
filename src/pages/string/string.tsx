@@ -13,8 +13,8 @@ import { StringDisplay } from './string-display'
 const STRING_ACTION_DURATION = 1000
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function swapArrayItems<T extends Array<any>>(array: T, index1: number, index2: number) {
-    ;[array[index1], array[index2]] = [array[index2], array[index1]]
+function swapArrayItems<T extends Array<any>>(mutArrayRef: T, index1: number, index2: number) {
+    ;[mutArrayRef[index1], mutArrayRef[index2]] = [mutArrayRef[index2], mutArrayRef[index1]]
 }
 
 export const StringPage = () => {
@@ -49,8 +49,6 @@ export const StringPage = () => {
                 delayInMs: STRING_ACTION_DURATION
             })
             setPerformingIndexes({ index1: null, index2: null })
-            console.log('stardIdx in loop: ', startIdx)
-            console.log('endIdx in loop: ', endIdx)
             flushSync(() => {
                 setPerformedIndexes((prev) => [...prev, startIdx, endIdx])
             })
@@ -61,10 +59,6 @@ export const StringPage = () => {
         setPerformingIndexes({ index1: null, index2: null })
         setIsReversing(false)
     }, [newItem])
-
-    useEffect(() => {
-        console.log('performed indecies: ', performedIndexes)
-    }, [performedIndexes])
 
     useEffect(() => {
         const handler = (event: KeyboardEvent): void => {

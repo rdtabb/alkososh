@@ -1,3 +1,68 @@
+import { SetStateAction } from 'jotai'
+import { useState, createContext, type PropsWithChildren, useMemo, useContext } from 'react'
+
+interface ListPageContextState {
+    isAddingToTail: boolean
+    isAddingToHead: boolean
+    isDeletingFromTail: boolean
+    isDeletingFromHead: boolean
+    isInserting: boolean
+    isDeletingAtIndex: boolean
+    setIsAddingToTail: React.Dispatch<SetStateAction<boolean>>
+    setIsAddingToHead: React.Dispatch<SetStateAction<boolean>>
+    setIsDeletingFromTail: React.Dispatch<SetStateAction<boolean>>
+    setIsDeletingFromHead: React.Dispatch<SetStateAction<boolean>>
+    setIsInserting: React.Dispatch<SetStateAction<boolean>>
+    setIsDeletingAtIndex: React.Dispatch<SetStateAction<boolean>>
+}
+
+const ListPageContext = createContext<ListPageContextState>({
+    isAddingToTail: false,
+    isDeletingFromTail: false,
+    isDeletingFromHead: false,
+    isAddingToHead: false,
+    isInserting: false,
+    isDeletingAtIndex: false,
+    setIsAddingToHead: () => {},
+    setIsDeletingFromHead: () => {},
+    setIsInserting: () => {},
+    setIsDeletingFromTail: () => {},
+    setIsAddingToTail: () => {},
+    setIsDeletingAtIndex: () => {}
+})
+
+export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
+    const [isAddingToTail, setIsAddingToTail] = useState<boolean>(false)
+    const [isAddingToHead, setIsAddingToHead] = useState<boolean>(false)
+    const [isDeletingFromTail, setIsDeletingFromTail] = useState<boolean>(false)
+    const [isDeletingFromHead, setIsDeletingFromHead] = useState<boolean>(false)
+    const [isInserting, setIsInserting] = useState<boolean>(false)
+    const [isDeletingAtIndex, setIsDeletingAtIndex] = useState<boolean>(false)
+
+    const contextValue: ListPageContextState = useMemo(
+        () => ({
+            isInserting,
+            isDeletingFromHead,
+            isDeletingFromTail,
+            isAddingToHead,
+            isAddingToTail,
+            isDeletingAtIndex,
+            setIsAddingToTail,
+            setIsDeletingFromTail,
+            setIsInserting,
+            setIsDeletingFromHead,
+            setIsAddingToHead,
+
+            setIsDeletingAtIndex
+        }),
+        [isInserting, isDeletingFromTail, isDeletingFromHead, isAddingToTail, isAddingToTail]
+    )
+
+    return <ListPageContext.Provider value={contextValue}>{children}</ListPageContext.Provider>
+}
+
+export const useListPageContext = () => useContext(ListPageContext)
+
 export class ListNode<T> {
     value: T
     next: ListNode<T> | null
@@ -146,4 +211,5 @@ export class LinkedList implements ILinkedList<string> {
     }
 }
 
+export const LIST_ACTION_DURATION = 500
 export const linkedListController = new LinkedList()

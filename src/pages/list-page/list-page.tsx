@@ -3,16 +3,29 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react'
 import { Button } from '../../ui/button/button'
 import { Input } from '../../ui/input/input'
 import { SolutionLayout } from '../../ui/solution-layout/solution-layout'
-import { preventDefault } from '../../utils/utils'
+import { preventDefault, performDelay } from '../../utils/utils'
 import styles from '../stack-page/stack-page.module.css'
 
 import { ListDisplay } from './list-display'
-import { LinkedList, linkedListController } from './list-page.state'
+import {
+    LinkedList,
+    linkedListController,
+    useListPageContext,
+    LIST_ACTION_DURATION
+} from './list-page.state'
 
 export const ListPage = (): JSX.Element => {
     const [newItem, setNewItem] = useState<string>('')
     const [index, setIndex] = useState<string>('')
     const [linkedList, setLinkedList] = useState<LinkedList | null>(null)
+    const {
+        setIsAddingToHead,
+        setIsDeletingFromHead,
+        setIsInserting,
+        setIsDeletingFromTail,
+        setIsAddingToTail,
+        setIsDeletingAtIndex
+    } = useListPageContext()
 
     const handleNewItemChange = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
         setNewItem(event.target.value)
@@ -22,36 +35,59 @@ export const ListPage = (): JSX.Element => {
         setIndex(event.target.value)
     }, [])
 
-    const addToTail = useCallback((): void => {
+    const addToTail = useCallback(async (): Promise<void> => {
         linkedListController.addToTail(newItem)
         setLinkedList(linkedListController.getList())
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsAddingToTail
+        })
         setNewItem('')
     }, [newItem])
 
-    const addToHead = useCallback((): void => {
+    const addToHead = useCallback(async (): Promise<void> => {
         linkedListController.addToHead(newItem)
         setLinkedList(linkedListController.getList())
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsAddingToHead
+        })
     }, [newItem])
 
-    const removeFromHead = useCallback((): void => {
+    const removeFromHead = useCallback(async (): Promise<void> => {
         linkedListController.removeFromHead()
         setLinkedList(linkedListController.getList())
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsDeletingFromHead
+        })
     }, [])
 
-    const removeFromTail = useCallback((): void => {
+    const removeFromTail = useCallback(async (): Promise<void> => {
         linkedListController.removeFromTail()
         setLinkedList(linkedListController.getList())
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsDeletingFromTail
+        })
     }, [])
 
-    const insertAtIndex = useCallback((): void => {
+    const insertAtIndex = useCallback(async (): Promise<void> => {
         linkedListController.insertAtIndex(parseInt(index), newItem)
         setLinkedList(linkedListController.getList())
-        console.log(linkedListController)
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsInserting
+        })
     }, [index, newItem])
 
-    const deleteAtIndex = useCallback((): void => {
+    const deleteAtIndex = useCallback(async (): Promise<void> => {
         linkedListController.deleteAtIndex(parseInt(index))
         setLinkedList(linkedListController.getList())
+        await performDelay({
+            delayInMs: LIST_ACTION_DURATION,
+            setIsDelayPerforming: setIsDeletingAtIndex
+        })
     }, [index])
 
     useEffect(() => {

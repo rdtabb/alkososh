@@ -9,6 +9,8 @@ interface StringDisplayProps {
     performedIndexes: number[]
 }
 
+const marginStyle = { margin: 0 }
+
 export const StringDisplay = memo(
     ({ string, performingIndex1, performingIndex2, performedIndexes }: StringDisplayProps) => {
         return (
@@ -33,7 +35,7 @@ export const StringDisplay = memo(
                             >
                                 {value}
                             </p>
-                            <p style={{ margin: 0 }}>{index}</p>
+                            <p style={marginStyle}>{index}</p>
                         </li>
                     )
                 })}
