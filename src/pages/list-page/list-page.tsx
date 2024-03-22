@@ -24,7 +24,9 @@ export const ListPage = (): JSX.Element => {
         setIsInserting,
         setIsDeletingFromTail,
         setIsAddingToTail,
-        setIsDeletingAtIndex
+        setIsDeletingAtIndex,
+        setPerformingIndecies,
+        performingIndecies
     } = useListPageContext()
 
     const handleNewItemChange = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
@@ -73,21 +75,33 @@ export const ListPage = (): JSX.Element => {
     }, [])
 
     const insertAtIndex = useCallback(async (): Promise<void> => {
-        linkedListController.insertAtIndex(parseInt(index), newItem)
+        await linkedListController.insertAtIndex(parseInt(index), newItem, async (i: number) => {
+            performingIndecies.add(i)
+            await performDelay({
+                delayInMs: LIST_ACTION_DURATION
+            })
+        })
         setLinkedList(linkedListController.getList())
         await performDelay({
             delayInMs: LIST_ACTION_DURATION,
             setIsDelayPerforming: setIsInserting
         })
+        setPerformingIndecies(new Set<number>([]))
     }, [index, newItem])
 
     const deleteAtIndex = useCallback(async (): Promise<void> => {
-        linkedListController.deleteAtIndex(parseInt(index))
+        await linkedListController.deleteAtIndex(parseInt(index), async (i: number) => {
+            performingIndecies.add(i)
+            await performDelay({
+                delayInMs: LIST_ACTION_DURATION
+            })
+        })
         setLinkedList(linkedListController.getList())
         await performDelay({
             delayInMs: LIST_ACTION_DURATION,
             setIsDelayPerforming: setIsDeletingAtIndex
         })
+        setPerformingIndecies(new Set<number>([]))
     }, [index])
 
     useEffect(() => {

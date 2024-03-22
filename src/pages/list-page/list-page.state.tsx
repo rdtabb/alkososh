@@ -8,12 +8,14 @@ interface ListPageContextState {
     isDeletingFromHead: boolean
     isInserting: boolean
     isDeletingAtIndex: boolean
+    performingIndecies: Set<number>
     setIsAddingToTail: React.Dispatch<SetStateAction<boolean>>
     setIsAddingToHead: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingFromTail: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingFromHead: React.Dispatch<SetStateAction<boolean>>
     setIsInserting: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingAtIndex: React.Dispatch<SetStateAction<boolean>>
+    setPerformingIndecies: React.Dispatch<SetStateAction<Set<number>>>
 }
 
 const ListPageContext = createContext<ListPageContextState>({
@@ -23,12 +25,14 @@ const ListPageContext = createContext<ListPageContextState>({
     isAddingToHead: false,
     isInserting: false,
     isDeletingAtIndex: false,
+    performingIndecies: new Set<number>([]),
     setIsAddingToHead: () => {},
     setIsDeletingFromHead: () => {},
     setIsInserting: () => {},
     setIsDeletingFromTail: () => {},
     setIsAddingToTail: () => {},
-    setIsDeletingAtIndex: () => {}
+    setIsDeletingAtIndex: () => {},
+    setPerformingIndecies: () => {}
 })
 
 export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
@@ -38,6 +42,7 @@ export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
     const [isDeletingFromHead, setIsDeletingFromHead] = useState<boolean>(false)
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isDeletingAtIndex, setIsDeletingAtIndex] = useState<boolean>(false)
+    const [performingIndecies, setPerformingIndecies] = useState<Set<number>>(new Set([]))
 
     const contextValue: ListPageContextState = useMemo(
         () => ({
@@ -47,12 +52,13 @@ export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
             isAddingToHead,
             isAddingToTail,
             isDeletingAtIndex,
+            performingIndecies,
             setIsAddingToTail,
             setIsDeletingFromTail,
             setIsInserting,
             setIsDeletingFromHead,
             setIsAddingToHead,
-
+            setPerformingIndecies,
             setIsDeletingAtIndex
         }),
         [isInserting, isDeletingFromTail, isDeletingFromHead, isAddingToTail, isAddingToTail]
@@ -81,8 +87,8 @@ interface ILinkedList<T> {
     addToHead(value: T): void
     removeFromTail(): void
     removeFromHead(): void
-    insertAtIndex(index: number, value: T): void
-    deleteAtIndex(index: number, value: T): void
+    insertAtIndex(index: number, value: T, cb: (index: number) => Promise<any>): void
+    deleteAtIndex(index: number, cb: (index: number) => Promise<any>): void
     getList(): ILinkedList<T>
     clear(): void
 }
@@ -148,7 +154,11 @@ export class LinkedList implements ILinkedList<string> {
         this.length--
     }
 
-    insertAtIndex(index: number, value: string): void {
+    async insertAtIndex(
+        index: number,
+        value: string,
+        callback: (...any: any[]) => Promise<any>
+    ): Promise<void> {
         if (index < 0 || index > this.length) {
             return
         }
@@ -169,6 +179,7 @@ export class LinkedList implements ILinkedList<string> {
             prev = current
             current = current?.next
             loopidx++
+            await callback(loopidx)
         }
 
         node.next = current
@@ -178,7 +189,7 @@ export class LinkedList implements ILinkedList<string> {
         this.length++
     }
 
-    deleteAtIndex(index: number): void {
+    async deleteAtIndex(index: number, callback: (...any: any[]) => Promise<any>): Promise<void> {
         if (index < 0 || index > this.length || !this.head) {
             return
         }
@@ -191,6 +202,7 @@ export class LinkedList implements ILinkedList<string> {
             prev = current
             current = current?.next as ListNode<string> | null
             loopidx++
+            await callback(loopidx)
         }
 
         if (prev && current) {

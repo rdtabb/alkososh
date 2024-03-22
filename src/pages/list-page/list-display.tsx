@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react'
 
 import { Circle } from '../../ui/circle/circle'
+import { SecondaryCircle } from '../../ui/circle/secondary-circle'
 import { ElementStates } from '../../types/element-states'
 import styles from '../stack-page/stack-page.module.css'
 
@@ -11,8 +12,13 @@ interface ListDisplayProps {
 }
 
 export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
-    const { isAddingToTail, isAddingToHead, isDeletingFromHead, isDeletingFromTail } =
-        useListPageContext()
+    const {
+        isAddingToTail,
+        isAddingToHead,
+        isDeletingFromHead,
+        isDeletingFromTail,
+        performingIndecies
+    } = useListPageContext()
 
     const listElements = useMemo((): JSX.Element[] => {
         const elements: JSX.Element[] = []
@@ -29,6 +35,10 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
             const isTail = !current.next
 
             function getItemState(): ElementStates {
+                if (performingIndecies.has(index)) {
+                    return ElementStates.Changing
+                }
+
                 if (isHead && (isAddingToHead || isDeletingFromHead)) {
                     return ElementStates.Changing
                 }
@@ -41,13 +51,17 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
             }
 
             const circle = (
-                <Circle
-                    index={index}
-                    letter={current.value}
-                    head={isHead ? 'head' : ''}
-                    tail={isTail ? 'tail' : ''}
-                    state={getItemState()}
-                />
+                <>
+                    {isAddingToHead && <SecondaryCircle value={current.value} />}
+                    <Circle
+                        index={index}
+                        letter={current.value}
+                        head={isHead ? 'head' : ''}
+                        tail={isTail ? 'tail' : ''}
+                        state={getItemState()}
+                    />
+                    {isAddingToTail && <SecondaryCircle value={current.value} />}
+                </>
             )
 
             current = current.next
@@ -56,7 +70,7 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
         }
 
         return elements
-    }, [linkedList])
+    }, [linkedList, isAddingToHead, isAddingToTail, isDeletingFromHead, isDeletingFromTail])
 
     return <ul className={styles['stack']}>{listElements}</ul>
 })
