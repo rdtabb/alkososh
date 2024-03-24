@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react'
+import { flushSync } from 'react-dom'
 
 import { Button } from '../../ui/button/button'
 import { Input } from '../../ui/input/input'
@@ -21,12 +22,11 @@ export const ListPage = (): JSX.Element => {
     const {
         setIsAddingToHead,
         setIsDeletingFromHead,
-        setIsInserting,
         setIsDeletingFromTail,
         setIsAddingToTail,
-        setIsDeletingAtIndex,
         setPerformingIndecies,
-        performingIndecies
+        setPerformedIndex,
+        setIsInserting
     } = useListPageContext()
 
     const handleNewItemChange = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
@@ -37,23 +37,40 @@ export const ListPage = (): JSX.Element => {
         setIndex(event.target.value)
     }, [])
 
+    const nullifyPerformedIndex = useCallback(async () => {
+        return new Promise((res) => {
+            setTimeout(() => {
+                setPerformedIndex(null)
+                res(200)
+            }, LIST_ACTION_DURATION)
+        })
+    }, [])
+
     const addToTail = useCallback(async (): Promise<void> => {
-        linkedListController.addToTail(newItem)
-        setLinkedList(linkedListController.getList())
         await performDelay({
             delayInMs: LIST_ACTION_DURATION,
             setIsDelayPerforming: setIsAddingToTail
         })
+        linkedListController.addToTail(newItem)
+        const new_list = linkedListController.getList()
+        setLinkedList(new_list)
+        setPerformedIndex(new_list.length - 1)
         setNewItem('')
+        await nullifyPerformedIndex()
     }, [newItem])
 
     const addToHead = useCallback(async (): Promise<void> => {
-        linkedListController.addToHead(newItem)
-        setLinkedList(linkedListController.getList())
         await performDelay({
             delayInMs: LIST_ACTION_DURATION,
             setIsDelayPerforming: setIsAddingToHead
         })
+        linkedListController.addToHead(newItem)
+
+        const new_list = linkedListController.getList()
+        setLinkedList(new_list)
+        setPerformedIndex(0)
+        setNewItem('')
+        await nullifyPerformedIndex()
     }, [newItem])
 
     const removeFromHead = useCallback(async (): Promise<void> => {
@@ -75,46 +92,46 @@ export const ListPage = (): JSX.Element => {
     }, [])
 
     const insertAtIndex = useCallback(async (): Promise<void> => {
+        setIsInserting(true)
         await linkedListController.insertAtIndex(parseInt(index), newItem, async (i: number) => {
-            performingIndecies.add(i)
+            flushSync(() => {
+                setPerformingIndecies((prev) => [...prev, i - 1])
+            })
             await performDelay({
                 delayInMs: LIST_ACTION_DURATION
             })
         })
         setLinkedList(linkedListController.getList())
-        await performDelay({
-            delayInMs: LIST_ACTION_DURATION,
-            setIsDelayPerforming: setIsInserting
-        })
-        setPerformingIndecies(new Set<number>([]))
+        setPerformedIndex(parseInt(index))
+        setIsInserting(false)
+        setPerformingIndecies([])
+        await nullifyPerformedIndex()
     }, [index, newItem])
 
     const deleteAtIndex = useCallback(async (): Promise<void> => {
         await linkedListController.deleteAtIndex(parseInt(index), async (i: number) => {
-            performingIndecies.add(i)
+            flushSync(() => {
+                setPerformingIndecies((prev) => [...prev, i - 1])
+            })
             await performDelay({
                 delayInMs: LIST_ACTION_DURATION
             })
         })
         setLinkedList(linkedListController.getList())
-        await performDelay({
-            delayInMs: LIST_ACTION_DURATION,
-            setIsDelayPerforming: setIsDeletingAtIndex
-        })
-        setPerformingIndecies(new Set<number>([]))
+        setPerformingIndecies([])
     }, [index])
 
     useEffect(() => {
         const enterHandler = (event: KeyboardEvent): void => {
             if (event.key === 'Enter' && newItem) {
-                addToTail()
+                addToHead()
             }
         }
 
         document.addEventListener('keydown', enterHandler)
 
         return () => document.removeEventListener('keydown', enterHandler)
-    }, [addToTail])
+    }, [addToHead])
 
     useEffect(
         () => () => {
@@ -172,7 +189,7 @@ export const ListPage = (): JSX.Element => {
                 </div>
             </form>
             <section className={styles['display-wrapper']}>
-                <ListDisplay linkedList={linkedList} />
+                <ListDisplay linkedList={linkedList} newItem={newItem} />
             </section>
         </SolutionLayout>
     )

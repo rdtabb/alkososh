@@ -6,21 +6,25 @@ import { ElementStates } from '../../types/element-states'
 import styles from '../stack-page/stack-page.module.css'
 
 import { LinkedList, ListNode, useListPageContext } from './list-page.state'
+import { ArrowIcon } from '../../ui/icons/arrow-icon'
 
 interface ListDisplayProps {
     linkedList: LinkedList | null
+    newItem: string
 }
 
-export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
+export const ListDisplay = memo(({ linkedList, newItem }: ListDisplayProps) => {
     const {
         isAddingToTail,
         isAddingToHead,
         isDeletingFromHead,
         isDeletingFromTail,
-        performingIndecies
+        performedIndex,
+        performingIndecies,
+        isInserting
     } = useListPageContext()
 
-    const listElements = useMemo((): JSX.Element[] => {
+    const listElements = (): JSX.Element[] => {
         const elements: JSX.Element[] = []
 
         if (!linkedList?.head) {
@@ -35,8 +39,12 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
             const isTail = !current.next
 
             function getItemState(): ElementStates {
-                if (performingIndecies.has(index)) {
+                if (performingIndecies.includes(index)) {
                     return ElementStates.Changing
+                }
+
+                if (performedIndex === index) {
+                    return ElementStates.Modified
                 }
 
                 if (isHead && (isAddingToHead || isDeletingFromHead)) {
@@ -50,17 +58,46 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
                 return ElementStates.Default
             }
 
+            const getTail = (): string | JSX.Element => {
+                if (isTail && !isAddingToTail) {
+                    return 'tail'
+                }
+
+                if (isTail && isAddingToTail) {
+                    return <SecondaryCircle value={newItem} />
+                }
+
+                return ''
+            }
+
+            const getHead = (): string | JSX.Element => {
+                if (isHead && !isAddingToHead) {
+                    return 'head'
+                }
+
+                if (isHead && isAddingToHead) {
+                    return <SecondaryCircle value={newItem} />
+                }
+
+                if (isInserting && performingIndecies.at(-1) === index) {
+                    return <SecondaryCircle value={newItem} />
+                }
+
+                return ''
+            }
+
             const circle = (
                 <>
-                    {isAddingToHead && <SecondaryCircle value={current.value} />}
                     <Circle
+                        as={'li'}
+                        key={index}
                         index={index}
                         letter={current.value}
-                        head={isHead ? 'head' : ''}
-                        tail={isTail ? 'tail' : ''}
+                        head={getHead()}
+                        tail={getTail()}
                         state={getItemState()}
                     />
-                    {isAddingToTail && <SecondaryCircle value={current.value} />}
+                    {!isTail && <ArrowIcon key={index + 1} />}
                 </>
             )
 
@@ -70,7 +107,7 @@ export const ListDisplay = memo(({ linkedList }: ListDisplayProps) => {
         }
 
         return elements
-    }, [linkedList, isAddingToHead, isAddingToTail, isDeletingFromHead, isDeletingFromTail])
+    }
 
-    return <ul className={styles['stack']}>{listElements}</ul>
+    return <ul className={styles['stack']}>{listElements()}</ul>
 })

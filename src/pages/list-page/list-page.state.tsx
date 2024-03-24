@@ -8,14 +8,16 @@ interface ListPageContextState {
     isDeletingFromHead: boolean
     isInserting: boolean
     isDeletingAtIndex: boolean
-    performingIndecies: Set<number>
+    performingIndecies: number[]
+    performedIndex: number | null
     setIsAddingToTail: React.Dispatch<SetStateAction<boolean>>
     setIsAddingToHead: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingFromTail: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingFromHead: React.Dispatch<SetStateAction<boolean>>
     setIsInserting: React.Dispatch<SetStateAction<boolean>>
     setIsDeletingAtIndex: React.Dispatch<SetStateAction<boolean>>
-    setPerformingIndecies: React.Dispatch<SetStateAction<Set<number>>>
+    setPerformingIndecies: React.Dispatch<SetStateAction<number[]>>
+    setPerformedIndex: React.Dispatch<SetStateAction<number | null>>
 }
 
 const ListPageContext = createContext<ListPageContextState>({
@@ -25,14 +27,16 @@ const ListPageContext = createContext<ListPageContextState>({
     isAddingToHead: false,
     isInserting: false,
     isDeletingAtIndex: false,
-    performingIndecies: new Set<number>([]),
+    performingIndecies: [],
+    performedIndex: null,
     setIsAddingToHead: () => {},
     setIsDeletingFromHead: () => {},
     setIsInserting: () => {},
     setIsDeletingFromTail: () => {},
     setIsAddingToTail: () => {},
     setIsDeletingAtIndex: () => {},
-    setPerformingIndecies: () => {}
+    setPerformingIndecies: () => {},
+    setPerformedIndex: () => {}
 })
 
 export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
@@ -42,7 +46,8 @@ export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
     const [isDeletingFromHead, setIsDeletingFromHead] = useState<boolean>(false)
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isDeletingAtIndex, setIsDeletingAtIndex] = useState<boolean>(false)
-    const [performingIndecies, setPerformingIndecies] = useState<Set<number>>(new Set([]))
+    const [performingIndecies, setPerformingIndecies] = useState<number[]>([])
+    const [performedIndex, setPerformedIndex] = useState<number | null>(null)
 
     const contextValue: ListPageContextState = useMemo(
         () => ({
@@ -53,15 +58,25 @@ export const ListPageContextProvider = ({ children }: PropsWithChildren) => {
             isAddingToTail,
             isDeletingAtIndex,
             performingIndecies,
+            performedIndex,
             setIsAddingToTail,
             setIsDeletingFromTail,
             setIsInserting,
             setIsDeletingFromHead,
             setIsAddingToHead,
             setPerformingIndecies,
-            setIsDeletingAtIndex
+            setIsDeletingAtIndex,
+            setPerformedIndex
         }),
-        [isInserting, isDeletingFromTail, isDeletingFromHead, isAddingToTail, isAddingToTail]
+        [
+            isInserting,
+            isDeletingFromTail,
+            isDeletingFromHead,
+            isAddingToTail,
+            isAddingToHead,
+            performedIndex,
+            performingIndecies
+        ]
     )
 
     return <ListPageContext.Provider value={contextValue}>{children}</ListPageContext.Provider>
@@ -159,6 +174,7 @@ export class LinkedList implements ILinkedList<string> {
         value: string,
         callback: (...any: any[]) => Promise<any>
     ): Promise<void> {
+        console.log('wtf')
         if (index < 0 || index > this.length) {
             return
         }
@@ -179,6 +195,8 @@ export class LinkedList implements ILinkedList<string> {
             prev = current
             current = current?.next
             loopidx++
+            console.log('inside loop index', loopidx)
+
             await callback(loopidx)
         }
 
@@ -202,6 +220,7 @@ export class LinkedList implements ILinkedList<string> {
             prev = current
             current = current?.next as ListNode<string> | null
             loopidx++
+            console.log('inside loop index', loopidx)
             await callback(loopidx)
         }
 

@@ -13,9 +13,11 @@ interface CircleProps {
     tailType?: 'string' | 'element'
     extraClass?: string
     isSmall?: boolean
+    as: React.ElementType
 }
 
 export const Circle = ({
+    as: Component,
     state = ElementStates.Default,
     letter,
     head,
@@ -25,7 +27,7 @@ export const Circle = ({
     isSmall
 }: CircleProps) => {
     return (
-        <div className={`${styles.content} ${extraClass}`}>
+        <Component className={`${styles.content} ${extraClass}`}>
             <div
                 className={`text text_type_input text_color_input mb-4 ${
                     styles.absolute
@@ -52,6 +54,6 @@ export const Circle = ({
             >
                 {tail}
             </div>
-        </div>
+        </Component>
     )
 }
