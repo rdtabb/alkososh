@@ -18,6 +18,7 @@
     "plugins": ["@typescript-eslint", "react", "react-hooks", "import", "prettier"],
     "rules": {
         "react/display-name": "off",
+        "no-unused-expressions": "off",
         "prettier/prettier": [
             "warn",
             {
